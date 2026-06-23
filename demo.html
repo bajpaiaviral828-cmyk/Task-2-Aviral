@@ -38,6 +38,11 @@
   <h1>✍️ Copywriting Transformer</h1>
   
   <div class="input-group">
+    <label>Google Gemini API Key</label>
+    <input type="password" id="apiKey" placeholder="Enter your free Gemini API Key...">
+  </div>
+
+  <div class="input-group">
     <label>Product Name</label>
     <input type="text" id="productName" placeholder="e.g. Smart Coffee Mug">
   </div>
@@ -72,6 +77,11 @@
 
 <script>
   async function generateCopy() {
+    const apiKey = document.getElementById('apiKey').value.trim();
+    if (!apiKey) {
+      alert("Please enter your Gemini API Key!"); return;
+    }
+
     const name = document.getElementById('productName').value;
     const desc = document.getElementById('productDesc').value;
     const platform = document.getElementById('platform').value;
@@ -85,16 +95,29 @@
     resultArea.style.display = 'block';
     resultArea.innerHTML = "<em>Generating your copy...</em>";
 
-    const prompt = `Write a ${tone} ${platform} post for a product called '${name}'. Description: '${desc}'.`;
-    const encodedPrompt = encodeURIComponent(prompt);
-    const url = `https://text.pollinations.ai/${encodedPrompt}?system=You%20are%20an%20expert%20copywriter.`;
+    const prompt = `You are an expert copywriter. Write a ${tone} ${platform} post for a product called '${name}'. Description: '${desc}'.`;
+    
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
     
     try {
-      const response = await fetch(url);
-      const text = await response.text();
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        resultArea.innerHTML = `<span style="color:red">Error: ${data.error.message}</span>`;
+        return;
+      }
+      
+      const text = data.candidates[0].content.parts[0].text;
       resultArea.textContent = text;
+
     } catch (e) {
-      resultArea.innerHTML = `<span style="color:red">Failed to connect to AI server.</span>`;
+      resultArea.innerHTML = `<span style="color:red">Failed to connect to Gemini API.</span>`;
     }
   }
 </script>
