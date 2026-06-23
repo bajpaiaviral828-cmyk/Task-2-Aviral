@@ -1,521 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Copywriting & Tone Transformer</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --bg: #0d0f14;
-    --card: #161a24;
-    --border: #252a38;
-    --accent: #6c63ff;
-    --accent2: #a78bfa;
-    --text: #e8eaf0;
-    --muted: #6b7280;
-    --green: #34d399;
-    --red: #f87171;
-    --input-bg: #1e2333;
-    --radius: 12px;
-  }
-
-  body {
-    font-family: 'Inter', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    padding: 24px 16px;
-    line-height: 1.6;
-  }
-
-  .container { max-width: 780px; margin: 0 auto; }
-
-  /* HEADER */
-  header {
-    text-align: center;
-    margin-bottom: 36px;
-    padding: 36px 24px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    position: relative;
-    overflow: hidden;
-  }
-  header::before {
-    content: '';
-    position: absolute;
-    top: -60px; left: 50%;
-    transform: translateX(-50%);
-    width: 300px; height: 300px;
-    background: radial-gradient(circle, rgba(108,99,255,0.18) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  header h1 { font-size: 1.9rem; font-weight: 700; margin-bottom: 6px; }
-  header h1 span { color: var(--accent2); }
-  header p { color: var(--muted); font-size: 0.9rem; }
-
-  /* API KEY SECTION */
-  .api-section {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px;
-    margin-bottom: 20px;
-  }
-  .api-section label {
-    display: block;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 8px;
-  }
-  .api-row { display: flex; gap: 10px; }
-  .api-row input { flex: 1; }
-  .api-note {
-    font-size: 0.78rem;
-    color: var(--muted);
-    margin-top: 8px;
-  }
-  .api-note a { color: var(--accent2); text-decoration: none; }
-  .api-note a:hover { text-decoration: underline; }
-
-  /* FORM */
-  .form-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 24px;
-    margin-bottom: 20px;
-  }
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  @media(max-width: 520px) { .form-grid { grid-template-columns: 1fr; } }
-
-  .field { display: flex; flex-direction: column; gap: 6px; }
-  .field.full { grid-column: 1 / -1; }
-
-  label {
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  input, select, textarea {
-    background: var(--input-bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    font-family: inherit;
-    font-size: 0.9rem;
-    padding: 10px 14px;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  input:focus, select:focus, textarea:focus {
-    border-color: var(--accent);
-  }
-  select option { background: var(--card); }
-  textarea { resize: vertical; min-height: 70px; }
-
-  /* SLIDERS */
-  .slider-row { display: flex; align-items: center; gap: 12px; }
-  .slider-row input[type=range] {
-    flex: 1; height: 4px; padding: 0;
-    accent-color: var(--accent);
-    background: var(--border);
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  .slider-val {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--accent2);
-    width: 36px;
-    text-align: right;
-  }
-
-  /* PLATFORM PILLS */
-  .pills { display: flex; gap: 8px; flex-wrap: wrap; }
-  .pill {
-    padding: 6px 16px;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    background: var(--input-bg);
-    color: var(--muted);
-    font-size: 0.82rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    user-select: none;
-  }
-  .pill:hover { border-color: var(--accent); color: var(--text); }
-  .pill.active {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #fff;
-  }
-
-  /* TONE PILLS */
-  .tone-pill { padding: 6px 14px; }
-  .tone-pill.active { background: #7c3aed; border-color: #7c3aed; }
-
-  /* GENERATE BUTTON */
-  .btn-generate {
-    width: 100%;
-    padding: 14px;
-    background: linear-gradient(135deg, var(--accent) 0%, #8b5cf6 100%);
-    border: none;
-    border-radius: 10px;
-    color: #fff;
-    font-family: inherit;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 20px;
-    transition: opacity 0.2s, transform 0.1s;
-    letter-spacing: 0.02em;
-  }
-  .btn-generate:hover { opacity: 0.9; }
-  .btn-generate:active { transform: scale(0.99); }
-  .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; }
-
-  /* OUTPUT */
-  .output-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 24px;
-    display: none;
-    animation: fadeIn 0.3s ease;
-  }
-  .output-card.show { display: block; }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .output-meta {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-bottom: 16px;
-  }
-  .badge {
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 999px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-  .badge-platform { background: rgba(108,99,255,0.2); color: var(--accent2); }
-  .badge-tone     { background: rgba(124,58,237,0.2); color: #c4b5fd; }
-  .badge-temp     { background: rgba(52,211,153,0.15); color: var(--green); }
-
-  .output-text {
-    white-space: pre-wrap;
-    font-size: 0.92rem;
-    line-height: 1.75;
-    color: #d1d5db;
-    border-top: 1px solid var(--border);
-    padding-top: 16px;
-  }
-
-  .copy-btn {
-    margin-top: 16px;
-    padding: 8px 16px;
-    background: transparent;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--muted);
-    font-family: inherit;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .copy-btn:hover { border-color: var(--accent); color: var(--text); }
-
-  /* SPINNER */
-  .spinner {
-    width: 20px; height: 20px;
-    border: 2px solid rgba(255,255,255,0.3);
-    border-top-color: #fff;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    display: inline-block;
-    vertical-align: middle;
-    margin-right: 8px;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* ERROR */
-  .error-box {
-    background: rgba(248,113,113,0.1);
-    border: 1px solid rgba(248,113,113,0.3);
-    border-radius: 8px;
-    padding: 12px 16px;
-    color: var(--red);
-    font-size: 0.85rem;
-    margin-top: 12px;
-    display: none;
-  }
-  .error-box.show { display: block; }
-
-  .section-title {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 10px;
-  }
-</style>
+  <meta charset="UTF-8">
+  <title>Copywriting Transformer</title>
+  <style>
+    body { 
+      font-family: 'Inter', sans-serif; margin: 0; padding: 20px; min-height: 100vh;
+      display: flex; justify-content: center; align-items: center;
+      background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+    }
+    .container { 
+      max-width: 600px; width: 100%;
+      background: white; border-radius: 20px; padding: 40px; 
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1); color: #333;
+    }
+    h1 { text-align: center; color: #1a1a1a; margin-top: 0; }
+    .input-group { margin-bottom: 20px; }
+    label { display: block; margin-bottom: 8px; font-weight: 600; color: #555; }
+    input, select { 
+      width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ccc;
+      box-sizing: border-box; font-size: 16px;
+    }
+    button { 
+      width: 100%; background: #4facfe; color: white; border: none; 
+      padding: 14px 20px; cursor: pointer; border-radius: 10px; 
+      font-size: 16px; font-weight: bold; margin-top: 10px;
+    }
+    .result { 
+      margin-top: 30px; padding: 20px; background: #f8f9fa; 
+      border-radius: 10px; min-height: 100px; white-space: pre-wrap;
+      border: 1px solid #eee; display: none;
+    }
+  </style>
 </head>
 <body>
 <div class="container">
-
-  <header>
-    <h1>Copywriting &amp; <span>Tone Transformer</span></h1>
-    <p>Project 2 — DecodeLabs Generative AI Internship · Powered by Google Gemini</p>
-  </header>
-
-  <!-- API KEY -->
-  <div class="api-section">
-    <label>Gemini API Key</label>
-    <div class="api-row">
-      <input type="password" id="apiKey" placeholder="Paste your API key here..." />
-    </div>
-    <p class="api-note">
-      Key stays in your browser only. Get one free at
-      <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a>.
-      <br><strong>Note:</strong> This frontend is for demonstration purposes. In a real production app, API calls should be routed through a backend server to protect the key.
-    </p>
+  <h1>✍️ Copywriting Transformer</h1>
+  
+  <div class="input-group">
+    <label>Product Name</label>
+    <input type="text" id="productName" placeholder="e.g. Smart Coffee Mug">
   </div>
 
-  <!-- FORM -->
-  <div class="form-card">
-    <div class="form-grid">
-      <div class="field full">
-        <label>Product Name</label>
-        <input type="text" id="productName" placeholder="e.g. NightOwl Earbuds" />
-      </div>
-      <div class="field full">
-        <label>Product Description</label>
-        <textarea id="productDesc" placeholder="e.g. Wireless earbuds with 30-hour battery and active noise cancellation"></textarea>
-      </div>
-
-      <div class="field full">
-        <div class="section-title">Platform</div>
-        <div class="pills" id="platformPills">
-          <div class="pill active" data-val="linkedin">LinkedIn</div>
-          <div class="pill" data-val="instagram">Instagram</div>
-          <div class="pill" data-val="email">Email</div>
-        </div>
-      </div>
-
-      <div class="field full">
-        <div class="section-title">Tone</div>
-        <div class="pills" id="tonePills">
-          <div class="pill tone-pill active" data-val="professional">Professional</div>
-          <div class="pill tone-pill" data-val="casual">Casual</div>
-          <div class="pill tone-pill" data-val="funny">Funny</div>
-          <div class="pill tone-pill" data-val="inspirational">Inspirational</div>
-          <div class="pill tone-pill" data-val="urgent">Urgent</div>
-        </div>
-      </div>
-
-      <div class="field">
-        <label>Temperature — <span style="color:#6b7280;font-weight:400;">creativity</span></label>
-        <div class="slider-row">
-          <input type="range" id="temperature" min="0" max="2" step="0.1" value="0.9"
-                 oninput="document.getElementById('tempVal').textContent=this.value" />
-          <span class="slider-val" id="tempVal">0.9</span>
-        </div>
-      </div>
-
-      <div class="field">
-        <label>Top-P — <span style="color:#6b7280;font-weight:400;">vocabulary range</span></label>
-        <div class="slider-row">
-          <input type="range" id="topP" min="0" max="1" step="0.05" value="0.95"
-                 oninput="document.getElementById('topPVal').textContent=this.value" />
-          <span class="slider-val" id="topPVal">0.95</span>
-        </div>
-      </div>
-    </div>
-
-    <button class="btn-generate" id="generateBtn" onclick="generate()">
-      Generate Copy
-    </button>
-    <div class="error-box" id="errorBox"></div>
+  <div class="input-group">
+    <label>Product Description</label>
+    <input type="text" id="productDesc" placeholder="Keeps coffee hot for 12 hours">
   </div>
 
-  <!-- OUTPUT -->
-  <div class="output-card" id="outputCard">
-    <div class="output-meta" id="outputMeta"></div>
-    <div class="output-text" id="outputText"></div>
-    <button class="copy-btn" onclick="copyToClipboard()">Copy to clipboard</button>
+  <div class="input-group">
+    <label>Platform</label>
+    <select id="platform">
+      <option value="linkedin">LinkedIn Post</option>
+      <option value="twitter">Twitter / X</option>
+      <option value="email">Email Campaign</option>
+    </select>
   </div>
 
+  <div class="input-group">
+    <label>Tone</label>
+    <select id="tone">
+      <option value="professional">Professional</option>
+      <option value="casual">Casual & Fun</option>
+      <option value="urgent">Urgent / Salesy</option>
+    </select>
+  </div>
+  
+  <button onclick="generateCopy()">Generate Copy</button>
+
+  <div class="result" id="resultArea"></div>
 </div>
 
 <script>
-  // ── pill selection ──────────────────────────────────────────────────────
-  function setupPills(containerId) {
-    const container = document.getElementById(containerId);
-    container.querySelectorAll('.pill').forEach(pill => {
-      pill.addEventListener('click', () => {
-        container.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-        pill.classList.add('active');
-      });
-    });
-  }
-  setupPills('platformPills');
-  setupPills('tonePills');
+  async function generateCopy() {
+    const name = document.getElementById('productName').value;
+    const desc = document.getElementById('productDesc').value;
+    const platform = document.getElementById('platform').value;
+    const tone = document.getElementById('tone').value;
+    const resultArea = document.getElementById('resultArea');
 
-  function getActive(containerId) {
-    return document.querySelector(`#${containerId} .pill.active`)?.dataset.val || '';
-  }
+    if (!name || !desc) {
+      alert("Please fill in product details!"); return;
+    }
 
-  // ── build prompt (mirrors templates.py) ────────────────────────────────
-  function buildPrompt(productName, productDesc, platform, tone) {
-    const platformRules = {
-      linkedin:  "Write a LinkedIn post. Keep it between 150-300 words. Use 2-3 line breaks between paragraphs. End with 3-5 relevant hashtags.",
-      instagram: "Write an Instagram caption. Keep it under 150 words, punchy and visual. Use emojis naturally. End with 5-10 relevant hashtags.",
-      email:     "Write a marketing email. Include: Subject line, opening hook, body (2-3 short paragraphs), and a clear CTA. Keep total length under 200 words."
-    };
-    const toneInstructions = {
-      professional:  "Formal, confident, and polished. No slang.",
-      casual:        "Relaxed and friendly, like talking to a friend.",
-      funny:         "Witty and humorous. Add a light joke or pun if it fits.",
-      inspirational: "Motivating and uplifting. Make the reader feel excited.",
-      urgent:        "Create FOMO. Use urgency — limited time, act now, don't miss out."
-    };
+    resultArea.style.display = 'block';
+    resultArea.innerHTML = "<em>Generating your copy...</em>";
 
-    return `You are a professional marketing copywriter. Follow the rules below strictly.
-
-=== PRODUCT INFO ===
-Product Name: ${productName}
-Product Description: ${productDesc}
-
-=== TARGET PLATFORM ===
-Platform: ${platform.charAt(0).toUpperCase() + platform.slice(1)}
-Platform Rules: ${platformRules[platform]}
-
-=== TONE ===
-Tone: ${tone.charAt(0).toUpperCase() + tone.slice(1)}
-Tone Instructions: ${toneInstructions[tone]}
-
-=== BRAND SAFETY GUIDELINES ===
-- Do not make false claims or guarantees
-- Do not use offensive or discriminatory language
-- Do not mention competitor names
-- Keep the message honest and on-brand
-
-Write the final copy now. Output ONLY the copy, nothing else.`;
-  }
-
-  // ── generate ────────────────────────────────────────────────────────────
-  async function generate() {
-    const apiKey      = document.getElementById('apiKey').value.trim();
-    const productName = document.getElementById('productName').value.trim();
-    const productDesc = document.getElementById('productDesc').value.trim();
-    const platform    = getActive('platformPills');
-    const tone        = getActive('tonePills');
-    const temperature = parseFloat(document.getElementById('temperature').value);
-    const topP        = parseFloat(document.getElementById('topP').value);
-
-    const errorBox = document.getElementById('errorBox');
-    errorBox.classList.remove('show');
-
-    if (!apiKey)      return showError('Paste your Gemini API key at the top.');
-    if (!productName) return showError('Product name is required.');
-    if (!productDesc) return showError('Product description is required.');
-
-    const btn = document.getElementById('generateBtn');
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span>Generating...';
-
-    document.getElementById('outputCard').classList.remove('show');
-
-    const prompt = buildPrompt(productName, productDesc, platform, tone);
-
+    const prompt = `Write a ${tone} ${platform} post for a product called '${name}'. Description: '${desc}'.`;
+    const encodedPrompt = encodeURIComponent(prompt);
+    const url = `https://text.pollinations.ai/${encodedPrompt}?system=You%20are%20an%20expert%20copywriter.`;
+    
     try {
-      const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: {
-              temperature: temperature,
-              topP: topP,
-              maxOutputTokens: 1024
-            }
-          })
-        }
-      );
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        const msg = data?.error?.message || 'API error. Check your key.';
-        return showError(msg);
-      }
-
-      const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-      if (!text) return showError('No output from model. Try again.');
-
-      showOutput(text, platform, tone, temperature, topP);
-
-    } catch (err) {
-      showError('Network error: ' + err.message);
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = 'Generate Copy';
+      const response = await fetch(url);
+      const text = await response.text();
+      resultArea.textContent = text;
+    } catch (e) {
+      resultArea.innerHTML = `<span style="color:red">Failed to connect to AI server.</span>`;
     }
   }
-
-  function showError(msg) {
-    const box = document.getElementById('errorBox');
-    box.textContent = msg;
-    box.classList.add('show');
-    document.getElementById('generateBtn').disabled = false;
-    document.getElementById('generateBtn').innerHTML = 'Generate Copy';
-  }
-
-  function showOutput(text, platform, tone, temperature, topP) {
-    document.getElementById('outputMeta').innerHTML = `
-      <span class="badge badge-platform">${platform}</span>
-      <span class="badge badge-tone">${tone}</span>
-      <span class="badge badge-temp">temp ${temperature} · top-p ${topP}</span>
-    `;
-    document.getElementById('outputText').textContent = text;
-    document.getElementById('outputCard').classList.add('show');
-    document.getElementById('outputCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }
-
-  function copyToClipboard() {
-    const text = document.getElementById('outputText').textContent;
-    navigator.clipboard.writeText(text).then(() => {
-      const btn = document.querySelector('.copy-btn');
-      btn.textContent = 'Copied!';
-      setTimeout(() => btn.textContent = 'Copy to clipboard', 2000);
-    });
-  }
-
-  // allow Enter in inputs
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) generate();
-  });
 </script>
 </body>
 </html>
