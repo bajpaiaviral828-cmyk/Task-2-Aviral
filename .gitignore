@@ -1,0 +1,8 @@
+batch_output.txt
+output_*.txt
+.env
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
